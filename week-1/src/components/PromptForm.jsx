@@ -106,11 +106,12 @@ export default function PromptForm({
         <Textarea
           id="content"
           name="content"
-          rows={8}
+          rows={6}
+          placeholder="Write a function that..."
           value={values.content}
           onChange={(e) => setField("content", e.target.value)}
           aria-invalid={Boolean(errors.content)}
-          className="prompt-code min-h-[180px] resize-y"
+          className="prompt-code min-h-[140px] resize-y"
         />
         {errors.content && (
           <p role="alert" className="text-sm text-destructive">
@@ -193,9 +194,11 @@ export default function PromptForm({
         <Textarea
           id="notes"
           name="notes"
-          rows={3}
+          rows={5}
+          placeholder="What worked well, what you'd change next time..."
           value={values.notes}
           onChange={(e) => setField("notes", e.target.value)}
+          className="min-h-[140px] resize-y"
         />
       </div>
 

@@ -35,6 +35,9 @@
 
   html {
     @apply scroll-smooth;
+    /* Render native form controls (number spinners, select dropdowns) in dark
+       mode so they match the Warm Espresso theme instead of bright OS chrome. */
+    color-scheme: dark;
     /* Always reserve scrollbar space so toggling content height (e.g. tag
        filters) never causes a horizontal layout shift. */
     scrollbar-gutter: stable;
