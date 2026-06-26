@@ -82,7 +82,9 @@ export default function PromptForm({
   return (
     <form onSubmit={handleSubmit} noValidate className="space-y-6">
       <div className={fieldClass}>
-        <Label htmlFor="title">Title *</Label>
+        <Label htmlFor="title" className="mb-2 block">
+          Title *
+        </Label>
         <Input
           id="title"
           name="title"
@@ -98,7 +100,9 @@ export default function PromptForm({
       </div>
 
       <div className={fieldClass}>
-        <Label htmlFor="content">Content *</Label>
+        <Label htmlFor="content" className="mb-2 block">
+          Content *
+        </Label>
         <Textarea
           id="content"
           name="content"
@@ -117,7 +121,9 @@ export default function PromptForm({
 
       <div className="grid gap-6 sm:grid-cols-2">
         <div className={fieldClass}>
-          <Label htmlFor="tool">Tool</Label>
+          <Label htmlFor="tool" className="mb-2 block">
+            Tool
+          </Label>
           <select
             id="tool"
             name="tool"
@@ -137,7 +143,9 @@ export default function PromptForm({
         </div>
 
         <div className={fieldClass}>
-          <Label htmlFor="model">Model</Label>
+          <Label htmlFor="model" className="mb-2 block">
+            Model
+          </Label>
           <Input
             id="model"
             name="model"
@@ -150,7 +158,9 @@ export default function PromptForm({
 
       <div className="grid gap-6 sm:grid-cols-2">
         <div className={fieldClass}>
-          <Label htmlFor="rating">Rating</Label>
+          <Label htmlFor="rating" className="mb-2 block">
+            Rating
+          </Label>
           <Input
             id="rating"
             name="rating"
@@ -163,7 +173,9 @@ export default function PromptForm({
         </div>
 
         <div className={fieldClass}>
-          <Label htmlFor="tags">Tags</Label>
+          <Label htmlFor="tags" className="mb-2 block">
+            Tags
+          </Label>
           <Input
             id="tags"
             name="tags"
@@ -175,7 +187,9 @@ export default function PromptForm({
       </div>
 
       <div className={fieldClass}>
-        <Label htmlFor="notes">Notes</Label>
+        <Label htmlFor="notes" className="mb-2 block">
+          Notes
+        </Label>
         <Textarea
           id="notes"
           name="notes"

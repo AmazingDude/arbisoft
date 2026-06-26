@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 
 const navLinkClass = ({ isActive }) =>
   cn(
-    "rounded-md px-3 py-1.5 text-sm font-medium transition-ui",
+    "select-none rounded-md px-3 py-1.5 text-sm font-medium transition-ui",
     isActive
       ? "bg-surface text-text-primary"
       : "text-text-secondary hover:bg-surface-hover hover:text-text-primary"
@@ -22,7 +22,7 @@ export default function Layout() {
         <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
           <Link
             to="/"
-            className="flex items-center gap-2 text-text-primary transition-ui hover:text-terracotta"
+            className="flex select-none items-center gap-2 text-text-primary transition-ui hover:text-terracotta"
           >
             <BookOpen className="h-5 w-5 text-terracotta" aria-hidden="true" />
             <span className="text-sm font-semibold tracking-tight sm:text-base">
