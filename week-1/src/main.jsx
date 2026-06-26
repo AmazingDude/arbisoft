@@ -7,7 +7,9 @@ import { PromptProvider } from "./context/PromptContext.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <BrowserRouter>
+    <BrowserRouter
+      future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+    >
       <PromptProvider>
         <App />
       </PromptProvider>

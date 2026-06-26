@@ -19,7 +19,9 @@ const samplePrompt = {
 // PromptCard renders a <Link>, so it needs a Router context.
 function renderCard(props) {
   return render(
-    <MemoryRouter>
+    <MemoryRouter
+      future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+    >
       <PromptCard {...props} />
     </MemoryRouter>
   );
