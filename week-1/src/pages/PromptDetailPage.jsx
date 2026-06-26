@@ -1,7 +1,8 @@
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, Trash2 } from "lucide-react";
 import { usePrompts } from "../hooks/usePrompts.js";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-variants";
 import PromptCodeBlock from "@/components/PromptCodeBlock.jsx";
 import StarRating from "@/components/StarRating.jsx";
 import ToolDot from "@/components/ToolDot.jsx";

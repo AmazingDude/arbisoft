@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { PromptContext } from "../context/PromptContext.jsx";
+import { PromptContext } from "../context/prompt-context.js";
 
 /**
  * Thin wrapper around PromptContext.

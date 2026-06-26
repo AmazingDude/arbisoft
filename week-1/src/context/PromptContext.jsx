@@ -1,5 +1,6 @@
-import { createContext, useCallback, useEffect, useReducer } from "react";
+import { useCallback, useEffect, useReducer } from "react";
 import { promptApi } from "../api/promptApi.js";
+import { PromptContext } from "./prompt-context.js";
 
 /**
  * Why a Context + reducer here:
@@ -47,8 +48,6 @@ function promptReducer(state, action) {
       return state;
   }
 }
-
-export const PromptContext = createContext(null);
 
 export function PromptProvider({ children }) {
   const [state, dispatch] = useReducer(promptReducer, initialState);
