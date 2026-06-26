@@ -1,0 +1,39 @@
+import { cva } from "class-variance-authority";
+import { cn } from "@/lib/utils";
+
+const buttonVariants = cva(
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-ui focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50",
+  {
+    variants: {
+      variant: {
+        default: "bg-terracotta text-white hover:bg-terracotta/90",
+        secondary:
+          "border border-border bg-surface text-text-primary hover:bg-surface-hover",
+        ghost:
+          "text-text-secondary hover:bg-surface-hover hover:text-text-primary",
+        destructive:
+          "border border-border bg-surface text-text-secondary hover:bg-surface-hover hover:text-destructive",
+      },
+      size: {
+        default: "h-9 px-4 py-2",
+        sm: "h-8 rounded-md px-3 text-xs",
+        icon: "h-8 w-8",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  }
+);
+
+function Button({ className, variant, size, ...props }) {
+  return (
+    <button
+      className={cn(buttonVariants({ variant, size, className }))}
+      {...props}
+    />
+  );
+}
+
+export { Button, buttonVariants };

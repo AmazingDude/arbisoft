@@ -8,11 +8,15 @@ import PromptCard from "./PromptCard.jsx";
  */
 export default function PromptList({ prompts, onDelete }) {
   if (prompts.length === 0) {
-    return <p>No prompts match your filters.</p>;
+    return (
+      <p className="rounded-md border border-border bg-surface px-4 py-8 text-center text-sm text-text-secondary">
+        No prompts match your filters.
+      </p>
+    );
   }
 
   return (
-    <div>
+    <div className="overflow-hidden rounded-md border border-border">
       {prompts.map((prompt) => (
         <PromptCard key={prompt.id} prompt={prompt} onDelete={onDelete} />
       ))}

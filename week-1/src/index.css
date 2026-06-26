@@ -1,0 +1,87 @@
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --color-background: #151413;
+  --color-surface: #1f1d1b;
+  --color-surface-hover: #262320;
+  --color-border: #2e2b28;
+  --color-text-primary: #ebe9e4;
+  --color-text-secondary: #9b9890;
+  --color-terracotta: #d97757;
+  --color-amber: #f5a524;
+  --color-white: #ffffff;
+  --color-tool-chatgpt: #5ec26a;
+  --color-tool-claude: #d97757;
+  --color-tool-cursor: #5b8def;
+  --color-tool-codex: #4fc3e0;
+  --color-tool-gemini: #f5a524;
+  --color-tool-other: #9b9890;
+  --color-code-bg: #1a1917;
+  --color-destructive: #e05252;
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    @apply scroll-smooth;
+    /* Always reserve scrollbar space so toggling content height (e.g. tag
+       filters) never causes a horizontal layout shift. */
+    scrollbar-gutter: stable;
+    /* Firefox themed scrollbar: thumb (border) on track (background). */
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border) var(--color-background);
+  }
+
+  body {
+    @apply min-h-screen bg-background font-sans text-text-primary antialiased;
+  }
+
+  /* Chromium/Safari themed scrollbar. */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--color-background);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 9999px;
+    border: 2px solid var(--color-background);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-surface-hover);
+  }
+
+  ::-webkit-scrollbar-corner {
+    background: var(--color-background);
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-terracotta ring-offset-2 ring-offset-background;
+  }
+}
+
+@layer utilities {
+  .prompt-code {
+    @apply rounded-md border border-border bg-code-bg px-4 py-3 font-mono text-sm leading-relaxed text-text-primary;
+  }
+
+  .transition-ui {
+    @apply transition-[color,background-color,border-color,transform,opacity] duration-150 ease-out motion-reduce:transition-none;
+  }
+}

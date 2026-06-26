@@ -1,5 +1,10 @@
 import { useState } from "react";
 import { PROMPT_TOOLS } from "../types.js";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
 
 const EMPTY = {
   title: "",
@@ -7,9 +12,11 @@ const EMPTY = {
   tool: "ChatGPT",
   model: "",
   rating: 3,
-  tags: "", // edited as a comma-separated string, normalized on submit
+  tags: "",
   notes: "",
 };
+
+const fieldClass = "space-y-2";
 
 /**
  * Controlled form for creating/editing a prompt.
@@ -73,86 +80,103 @@ export default function PromptForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} noValidate>
-      <div>
-        <label htmlFor="title">Title *</label>
-        <input
+    <form onSubmit={handleSubmit} noValidate className="space-y-6">
+      <div className={fieldClass}>
+        <Label htmlFor="title">Title *</Label>
+        <Input
           id="title"
           name="title"
           value={values.title}
           onChange={(e) => setField("title", e.target.value)}
           aria-invalid={Boolean(errors.title)}
         />
-        {errors.title && <p role="alert">{errors.title}</p>}
+        {errors.title && (
+          <p role="alert" className="text-sm text-destructive">
+            {errors.title}
+          </p>
+        )}
       </div>
 
-      <div>
-        <label htmlFor="content">Content *</label>
-        <textarea
+      <div className={fieldClass}>
+        <Label htmlFor="content">Content *</Label>
+        <Textarea
           id="content"
           name="content"
-          rows={6}
+          rows={8}
           value={values.content}
           onChange={(e) => setField("content", e.target.value)}
           aria-invalid={Boolean(errors.content)}
+          className="prompt-code min-h-[180px] resize-y"
         />
-        {errors.content && <p role="alert">{errors.content}</p>}
+        {errors.content && (
+          <p role="alert" className="text-sm text-destructive">
+            {errors.content}
+          </p>
+        )}
       </div>
 
-      <div>
-        <label htmlFor="tool">Tool</label>
-        <select
-          id="tool"
-          name="tool"
-          value={values.tool}
-          onChange={(e) => setField("tool", e.target.value)}
-        >
-          {PROMPT_TOOLS.map((tool) => (
-            <option key={tool} value={tool}>
-              {tool}
-            </option>
-          ))}
-        </select>
+      <div className="grid gap-6 sm:grid-cols-2">
+        <div className={fieldClass}>
+          <Label htmlFor="tool">Tool</Label>
+          <select
+            id="tool"
+            name="tool"
+            value={values.tool}
+            onChange={(e) => setField("tool", e.target.value)}
+            className={cn(
+              "flex h-9 w-full rounded-md border border-border bg-surface px-3 py-1 text-sm text-text-primary transition-ui",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            )}
+          >
+            {PROMPT_TOOLS.map((tool) => (
+              <option key={tool} value={tool}>
+                {tool}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className={fieldClass}>
+          <Label htmlFor="model">Model</Label>
+          <Input
+            id="model"
+            name="model"
+            value={values.model}
+            onChange={(e) => setField("model", e.target.value)}
+            placeholder="e.g. gpt-4o, claude-3.5-sonnet"
+          />
+        </div>
       </div>
 
-      <div>
-        <label htmlFor="model">Model</label>
-        <input
-          id="model"
-          name="model"
-          value={values.model}
-          onChange={(e) => setField("model", e.target.value)}
-          placeholder="e.g. gpt-4o, claude-3.5-sonnet"
-        />
+      <div className="grid gap-6 sm:grid-cols-2">
+        <div className={fieldClass}>
+          <Label htmlFor="rating">Rating</Label>
+          <Input
+            id="rating"
+            name="rating"
+            type="number"
+            min={1}
+            max={5}
+            value={values.rating}
+            onChange={(e) => setField("rating", e.target.value)}
+          />
+        </div>
+
+        <div className={fieldClass}>
+          <Label htmlFor="tags">Tags</Label>
+          <Input
+            id="tags"
+            name="tags"
+            value={values.tags}
+            onChange={(e) => setField("tags", e.target.value)}
+            placeholder="comma, separated, tags"
+          />
+        </div>
       </div>
 
-      <div>
-        <label htmlFor="rating">Rating</label>
-        <input
-          id="rating"
-          name="rating"
-          type="number"
-          min={1}
-          max={5}
-          value={values.rating}
-          onChange={(e) => setField("rating", e.target.value)}
-        />
-      </div>
-
-      <div>
-        <label htmlFor="tags">Tags</label>
-        <input
-          id="tags"
-          name="tags"
-          value={values.tags}
-          onChange={(e) => setField("tags", e.target.value)}
-          placeholder="comma, separated, tags"
-        />
-      </div>
-
-      <div>
-        <label htmlFor="notes">Notes</label>
-        <textarea
+      <div className={fieldClass}>
+        <Label htmlFor="notes">Notes</Label>
+        <Textarea
           id="notes"
           name="notes"
           rows={3}
@@ -161,9 +185,9 @@ export default function PromptForm({
         />
       </div>
 
-      <button type="submit" disabled={submitting}>
+      <Button type="submit" disabled={submitting}>
         {submitting ? "Saving…" : submitLabel}
-      </button>
+      </Button>
     </form>
   );
 }

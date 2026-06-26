@@ -6,24 +6,18 @@ import PromptList from "../components/PromptList.jsx";
 
 /**
  * "/" — list view with search + tag filter.
- *
- * Search/tag UI state is local to this page. The expensive part (deriving the
- * filtered list) is wrapped in useMemo so it only recomputes when prompts,
- * the query, or the selected tags actually change — not on every render.
  */
 export default function DashboardPage() {
   const { prompts, isLoading, error, removePrompt } = usePrompts();
   const [query, setQuery] = useState("");
   const [selectedTags, setSelectedTags] = useState([]);
 
-  // All unique tags across prompts, for the TagFilter.
   const allTags = useMemo(() => {
     const set = new Set();
     prompts.forEach((p) => p.tags.forEach((t) => set.add(t)));
     return [...set].sort();
   }, [prompts]);
 
-  // Derived, filtered list — memoized so typing/filtering stays cheap.
   const visiblePrompts = useMemo(() => {
     const q = query.trim().toLowerCase();
     return prompts.filter((p) => {
@@ -41,7 +35,6 @@ export default function DashboardPage() {
     });
   }, [prompts, query, selectedTags]);
 
-  // Stable handlers passed down to memoized children.
   const handleToggleTag = useCallback((tag) => {
     setSelectedTags((prev) =>
       prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
@@ -57,24 +50,40 @@ export default function DashboardPage() {
     [removePrompt]
   );
 
-  if (isLoading) return <p>Loading prompts…</p>;
-  if (error) return <p role="alert">Failed to load prompts: {error}</p>;
+  if (isLoading) {
+    return (
+      <p className="text-sm text-text-secondary">Loading prompts…</p>
+    );
+  }
+
+  if (error) {
+    return (
+      <p role="alert" className="text-sm text-destructive">
+        Failed to load prompts: {error}
+      </p>
+    );
+  }
 
   return (
-    <section>
-      <h2>Prompt Dashboard</h2>
+    <section className="space-y-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h2 className="text-xl font-semibold tracking-tight text-text-primary">
+            Prompt Dashboard
+          </h2>
+          <p className="mt-1 text-sm text-text-secondary">
+            {visiblePrompts.length} of {prompts.length} prompts
+          </p>
+        </div>
+        <SearchBar value={query} onChange={setQuery} className="sm:ml-auto" />
+      </div>
 
-      <SearchBar value={query} onChange={setQuery} />
       <TagFilter
         tags={allTags}
         selectedTags={selectedTags}
         onToggle={handleToggleTag}
         onClear={handleClearTags}
       />
-
-      <p>
-        {visiblePrompts.length} of {prompts.length} prompts
-      </p>
 
       <PromptList prompts={visiblePrompts} onDelete={handleDelete} />
     </section>

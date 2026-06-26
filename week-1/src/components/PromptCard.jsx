@@ -1,5 +1,10 @@
 import { memo } from "react";
 import { Link } from "react-router-dom";
+import { Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import StarRating from "./StarRating.jsx";
+import ToolDot from "./ToolDot.jsx";
+import { cn } from "@/lib/utils";
 
 /**
  * Single prompt summary in the list.
@@ -13,25 +18,49 @@ import { Link } from "react-router-dom";
  */
 function PromptCard({ prompt, onDelete }) {
   return (
-    <article>
-      <h3>
-        <Link to={`/prompts/${prompt.id}`}>{prompt.title}</Link>
-      </h3>
-      <p>
-        <span>{prompt.tool}</span>
-        {prompt.model ? <span> · {prompt.model}</span> : null}
-        <span> · {"★".repeat(prompt.rating)}</span>
-      </p>
-      {prompt.tags.length > 0 && (
-        <ul>
-          {prompt.tags.map((tag) => (
-            <li key={tag}>#{tag}</li>
-          ))}
-        </ul>
+    <article
+      className={cn(
+        "group flex items-center gap-3 border-b border-border bg-surface px-4 py-3 transition-ui",
+        "motion-safe:hover:-translate-y-px hover:bg-surface-hover"
       )}
-      <button type="button" onClick={() => onDelete(prompt.id)}>
-        Delete
-      </button>
+    >
+      <div className="min-w-0 flex-1">
+        <h3 className="truncate text-sm font-medium">
+          <Link
+            to={`/prompts/${prompt.id}`}
+            className="text-text-primary transition-ui hover:text-terracotta"
+          >
+            {prompt.title}
+          </Link>
+        </h3>
+
+        <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-text-secondary">
+          <span className="inline-flex items-center gap-1.5">
+            <ToolDot tool={prompt.tool} />
+            <span>{prompt.tool}</span>
+          </span>
+          {prompt.model ? <span>· {prompt.model}</span> : null}
+          <StarRating rating={prompt.rating} className="text-xs" />
+        </div>
+
+        {prompt.tags.length > 0 && (
+          <p className="mt-1 truncate text-xs text-text-secondary">
+            {prompt.tags.map((tag) => `#${tag}`).join(" ")}
+          </p>
+        )}
+      </div>
+
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon"
+        onClick={() => onDelete(prompt.id)}
+        className="shrink-0 text-text-secondary opacity-0 transition-ui group-hover:opacity-100 focus-visible:opacity-100 hover:text-destructive"
+        aria-label="Delete prompt"
+      >
+        <Trash2 className="h-4 w-4" aria-hidden="true" />
+        <span className="sr-only">Delete</span>
+      </Button>
     </article>
   );
 }
