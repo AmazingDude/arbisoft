@@ -85,7 +85,35 @@ Make sure all tests pass after adding these.
 
 ---
 
-## Entry 3 - _(next step, e.g. styling/polish or Week 2 prep)_
+## Entry 3 - Warm Espresso Styling (Tailwind + shadcn + lucide-react)
+
+**Date:** 2026-06-26
+**Tool:** GLM 5.2 for Design
+**Goal:** Move from unstyled components to a finished visual design (Tailwind CSS, lucide-react icons, shadcn/ui primitives) using a "Warm Espresso" design direction: warm near-black palette, terracotta accent, monospace prompt content, per-tool color dots, no purple/glassmorphism/gradients.
+
+**Prompt used:** Full design-token prompt specifying color tokens (background #151413, surface #1F1D1B, accent terracotta #D97757, amber #F5A524 for ratings), typography (Inter for UI, IBM Plex Mono for prompt content), a 5-tool color-dot system, Linear-style 150ms ease-out micro-interactions, explicit ban on purple/glassmorphism/gradients/blur, and Notion-style detail page layout.
+
+**Result:** Tailwind CSS v4 set up via `@tailwindcss/vite`. shadcn/ui-style primitives added manually (Button, Input, Textarea, Label) under `src/components/ui/`. lucide-react icons added (BookOpen, Search, Trash2, ArrowLeft). New shared components: `ToolDot.jsx`, `StarRating.jsx`, `PromptCodeBlock.jsx`. All 5 tests still passing, production build succeeds.
+
+**Review notes / corrections:** Cross-checked this output against separate feedback from ChatGPT (button contrast, hover state values, 150ms animations) - confirmed all of those were already specified in the original prompt and present in the implementation, so no rework was needed there. Decided to defer the suggested app rename (e.g. "Forge", "PromptKit") to a later, separate commit rather than mixing branding changes into the styling commit.
+
+---
+
+## Entry 4 - Scrollbar Layout Shift Fix
+
+**Date:** 2026-06-26
+**Tool:** GLM 5.2
+**Goal:** Fix a layout shift bug where toggling a tag filter (shrinking the list below viewport height) caused the scrollbar to disappear and the content area to jump horizontally.
+
+**Prompt used:** Add `scrollbar-gutter: stable` to reserve scrollbar space permanently, and theme the scrollbar itself (track/thumb/hover colors) to match the Warm Espresso palette instead of using the default OS scrollbar.
+
+**Result:** `scrollbar-gutter: stable` added to `html`. Custom themed scrollbar added for both Firefox (`scrollbar-width`/`scrollbar-color`) and Chromium/Safari (`::-webkit-scrollbar`), using existing `@theme` CSS variables so it stays in sync with the design tokens. Build succeeds.
+
+**Review notes / corrections:** None needed - confirmed the fix targets the correct scroll container (the page root, since the app currently scrolls at the `html` level, not an inner container).
+
+---
+
+## Entry 5 - _(next step)_
 
 **Date:**
 **Tool:**
