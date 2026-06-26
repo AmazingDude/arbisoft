@@ -16,6 +16,15 @@ import { cn } from "@/lib/utils";
  *
  * @param {{ prompt: import("../types.js").Prompt, onDelete: (id: string) => void }} props
  */
+const PREVIEW_LENGTH = 70;
+
+function getContentPreview(content) {
+  const normalized = content.replace(/\s+/g, " ").trim();
+  return normalized.length > PREVIEW_LENGTH
+    ? `${normalized.slice(0, PREVIEW_LENGTH)}…`
+    : normalized;
+}
+
 function PromptCard({ prompt, onDelete }) {
   return (
     <article
@@ -42,6 +51,12 @@ function PromptCard({ prompt, onDelete }) {
           {prompt.model ? <span>· {prompt.model}</span> : null}
           <StarRating rating={prompt.rating} className="text-xs" />
         </div>
+
+        {prompt.content && (
+          <p className="mt-1 truncate font-mono text-xs text-text-secondary">
+            {getContentPreview(prompt.content)}
+          </p>
+        )}
 
         {prompt.tags.length > 0 && (
           <p className="mt-1 truncate text-xs text-text-secondary">
