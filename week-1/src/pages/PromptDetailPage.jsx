@@ -47,7 +47,7 @@ export default function PromptDetailPage() {
       <div>
         <Link
           to="/"
-          className="inline-flex items-center gap-1.5 text-sm text-text-secondary transition-ui hover:text-terracotta"
+          className="inline-flex select-none items-center gap-1.5 text-sm text-text-secondary transition-ui hover:text-terracotta"
         >
           <ArrowLeft className="h-4 w-4" aria-hidden="true" />
           Back
