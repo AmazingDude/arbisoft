@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.database import Base, engine
 from app.models import Prompt, User  # noqa: F401
-from app.routers import health
+from app.routers import health, prompts
 
 
 @asynccontextmanager
@@ -28,3 +28,5 @@ app.add_middleware(
 )
 
 app.include_router(health.router)
+app.include_router(prompts.router)
+app.include_router(prompts.users_router)
