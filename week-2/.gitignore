@@ -1,0 +1,15 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Environment & secrets
+.env
+
+# SQLite database
+*.db
+
+# OS junk
+.DS_Store
+Thumbs.db
