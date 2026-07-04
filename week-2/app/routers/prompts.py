@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -51,10 +51,17 @@ def create_prompt(
     return prompt
 
 
+def _exact_tag_match(tag: str):
+    """Match a whole tag token in the comma-separated tags column."""
+    normalized = tag.strip()
+    padded_tags = func.concat(",", Prompt.tags, ",")
+    return padded_tags.contains(f",{normalized},")
+
+
 @router.get("", response_model=list[PromptResponse])
 def list_prompts(
     tool: str | None = Query(default=None, description="Filter by tool name"),
-    tag: str | None = Query(default=None, description="Filter by tag substring"),
+    tag: str | None = Query(default=None, description="Filter by exact tag name"),
     db: Session = Depends(get_db),
 ):
     query = select(Prompt)
@@ -62,7 +69,7 @@ def list_prompts(
     if tool is not None:
         query = query.where(Prompt.tool == tool)
     if tag is not None:
-        query = query.where(Prompt.tags.contains(tag))
+        query = query.where(_exact_tag_match(tag))
 
     return db.scalars(query).all()
 
