@@ -33,6 +33,12 @@ ruff check app/ scripts/ --fix
 
 Configuration lives in `pyproject.toml` (rules: E, F, I; line length 88).
 
+### Tests
+
+```bash
+pytest
+```
+
 ## Database
 
 Tables are created on app startup. You can also run:
