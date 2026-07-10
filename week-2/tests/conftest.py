@@ -9,6 +9,7 @@ from sqlalchemy.pool import StaticPool
 from app.database import Base, get_db
 from app.main import app
 from app.models import Prompt, User  # noqa: F401
+from app.security import hash_password
 
 TEST_DATABASE_URL = "sqlite://"
 
@@ -44,7 +45,11 @@ def client(db: Session) -> Generator[TestClient, None, None]:
 
 @pytest.fixture()
 def test_user(db: Session) -> User:
-    user = User(username="testuser", email="test@example.com")
+    user = User(
+        username="testuser",
+        email="test@example.com",
+        hashed_password=hash_password("testpassword"),
+    )
     db.add(user)
     db.commit()
     db.refresh(user)

@@ -4,7 +4,7 @@ from app.schemas.prompt import (
     PromptResponse,
     PromptUpdate,
 )
-from app.schemas.user import UserBase, UserResponse
+from app.schemas.user import UserBase, UserCreate, UserResponse
 
 __all__ = [
     "PromptBase",
@@ -12,5 +12,6 @@ __all__ = [
     "PromptResponse",
     "PromptUpdate",
     "UserBase",
+    "UserCreate",
     "UserResponse",
 ]
