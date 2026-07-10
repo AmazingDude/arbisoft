@@ -61,8 +61,8 @@ def test_create_prompt_rejects_out_of_range_rating(client, auth_headers):
     assert response.status_code == 422
 
 
-def test_get_prompt_returns_404_for_missing_id(client):
-    response = client.get("/prompts/99999")
+def test_get_prompt_returns_404_for_missing_id(client, auth_headers):
+    response = client.get("/prompts/99999", headers=auth_headers)
 
     assert response.status_code == 404
     assert response.json()["detail"] == "Prompt with id 99999 not found"
@@ -106,7 +106,7 @@ def test_delete_prompt_then_get_returns_404(client, auth_headers):
     delete_response = client.delete(f"/prompts/{prompt_id}", headers=auth_headers)
     assert delete_response.status_code == 204
 
-    get_response = client.get(f"/prompts/{prompt_id}")
+    get_response = client.get(f"/prompts/{prompt_id}", headers=auth_headers)
     assert get_response.status_code == 404
     assert get_response.json()["detail"] == f"Prompt with id {prompt_id} not found"
 
@@ -123,7 +123,7 @@ def test_list_prompts_tag_filter_excludes_similar_tags(client, auth_headers):
         headers=auth_headers,
     )
 
-    response = client.get("/prompts?tag=react")
+    response = client.get("/prompts?tag=react", headers=auth_headers)
 
     assert response.status_code == 200
     titles = [prompt["title"] for prompt in response.json()]
@@ -166,3 +166,103 @@ def test_non_owner_cannot_delete_prompt(client, db):
         headers=bearer_headers(admin_token),
     )
     assert admin_delete_response.status_code == 204
+
+
+def test_non_owner_cannot_read_prompt(client):
+    register_user(client, "owner", "owner@example.com", "validpass1")
+    owner_token = login_user(client, "owner", "validpass1")
+
+    create_response = client.post(
+        "/prompts",
+        json=prompt_payload(title="Private prompt"),
+        headers=bearer_headers(owner_token),
+    )
+    prompt_id = create_response.json()["id"]
+
+    register_user(client, "other", "other@example.com", "validpass1")
+    other_token = login_user(client, "other", "validpass1")
+
+    response = client.get(
+        f"/prompts/{prompt_id}",
+        headers=bearer_headers(other_token),
+    )
+
+    assert response.status_code == 403
+    assert response.json()["detail"] == "Not allowed to view this prompt"
+
+
+def test_list_prompts_only_shows_current_users_prompts(client):
+    register_user(client, "alice", "alice@example.com", "validpass1")
+    alice_token = login_user(client, "alice", "validpass1")
+    alice_headers = bearer_headers(alice_token)
+
+    register_user(client, "bob", "bob@example.com", "validpass1")
+    bob_token = login_user(client, "bob", "validpass1")
+    bob_headers = bearer_headers(bob_token)
+
+    client.post(
+        "/prompts",
+        json=prompt_payload(title="Alice prompt"),
+        headers=alice_headers,
+    )
+    client.post(
+        "/prompts",
+        json=prompt_payload(title="Bob prompt"),
+        headers=bob_headers,
+    )
+
+    alice_list = client.get("/prompts", headers=alice_headers)
+    assert alice_list.status_code == 200
+    assert [prompt["title"] for prompt in alice_list.json()] == ["Alice prompt"]
+
+    bob_list = client.get("/prompts", headers=bob_headers)
+    assert bob_list.status_code == 200
+    assert [prompt["title"] for prompt in bob_list.json()] == ["Bob prompt"]
+
+
+def test_admin_can_read_all_prompts(client, db):
+    register_user(client, "alice", "alice@example.com", "validpass1")
+    alice_token = login_user(client, "alice", "validpass1")
+
+    register_user(client, "bob", "bob@example.com", "validpass1")
+    bob_token = login_user(client, "bob", "validpass1")
+
+    client.post(
+        "/prompts",
+        json=prompt_payload(title="Alice prompt"),
+        headers=bearer_headers(alice_token),
+    )
+    client.post(
+        "/prompts",
+        json=prompt_payload(title="Bob prompt"),
+        headers=bearer_headers(bob_token),
+    )
+
+    admin = User(
+        username="admin",
+        email="admin@example.com",
+        hashed_password=hash_password("validpass1"),
+        role="admin",
+    )
+    db.add(admin)
+    db.commit()
+
+    admin_token = login_user(client, "admin", "validpass1")
+    response = client.get("/prompts", headers=bearer_headers(admin_token))
+
+    assert response.status_code == 200
+    titles = sorted(prompt["title"] for prompt in response.json())
+    assert titles == ["Alice prompt", "Bob prompt"]
+
+
+def test_user_cannot_view_other_users_prompt_list(client, test_user):
+    register_user(client, "other", "other@example.com", "validpass1")
+    other_token = login_user(client, "other", "validpass1")
+
+    response = client.get(
+        f"/users/{test_user.id}/prompts",
+        headers=bearer_headers(other_token),
+    )
+
+    assert response.status_code == 403
+    assert response.json()["detail"] == "Not allowed to view this user's prompts"

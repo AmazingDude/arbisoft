@@ -54,13 +54,29 @@ def get_current_user(
     return user
 
 
-def can_modify_prompt(user: User, prompt: Prompt) -> bool:
+def can_access_prompt(user: User, prompt: Prompt) -> bool:
     return user.role == "admin" or prompt.user_id == user.id
 
 
+def require_prompt_read_access(user: User, prompt: Prompt) -> None:
+    if not can_access_prompt(user, prompt):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not allowed to view this prompt",
+        )
+
+
 def require_prompt_owner_or_admin(user: User, prompt: Prompt) -> None:
-    if not can_modify_prompt(user, prompt):
+    if not can_access_prompt(user, prompt):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Not allowed to modify this prompt",
+        )
+
+
+def require_user_profile_access(current_user: User, target_user_id: int) -> None:
+    if current_user.role != "admin" and current_user.id != target_user_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not allowed to view this user's prompts",
         )

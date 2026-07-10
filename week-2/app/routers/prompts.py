@@ -3,7 +3,12 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.dependencies import get_current_user, require_prompt_owner_or_admin
+from app.dependencies import (
+    get_current_user,
+    require_prompt_owner_or_admin,
+    require_prompt_read_access,
+    require_user_profile_access,
+)
 from app.models.prompt import Prompt
 from app.models.user import User
 from app.schemas.prompt import PromptCreate, PromptResponse, PromptUpdate
@@ -61,9 +66,13 @@ def _exact_tag_match(tag: str):
 def list_prompts(
     tool: str | None = Query(default=None, description="Filter by tool name"),
     tag: str | None = Query(default=None, description="Filter by exact tag name"),
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
     query = select(Prompt)
+
+    if current_user.role != "admin":
+        query = query.where(Prompt.user_id == current_user.id)
 
     if tool is not None:
         query = query.where(Prompt.tool == tool)
@@ -74,8 +83,14 @@ def list_prompts(
 
 
 @router.get("/{prompt_id}", response_model=PromptResponse)
-def get_prompt(prompt_id: int, db: Session = Depends(get_db)):
-    return get_prompt_or_404(db, prompt_id)
+def get_prompt(
+    prompt_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    prompt = get_prompt_or_404(db, prompt_id)
+    require_prompt_read_access(current_user, prompt)
+    return prompt
 
 
 @router.patch("/{prompt_id}", response_model=PromptResponse)
@@ -113,6 +128,11 @@ def delete_prompt(
 
 
 @users_router.get("/{user_id}/prompts", response_model=list[PromptResponse])
-def list_user_prompts(user_id: int, db: Session = Depends(get_db)):
+def list_user_prompts(
+    user_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
     user = get_user_or_404(db, user_id)
+    require_user_profile_access(current_user, user_id)
     return user.prompts
