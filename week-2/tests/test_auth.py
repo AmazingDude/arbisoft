@@ -1,13 +1,7 @@
 import jwt
 
 from app.config import JWT_ALGORITHM, SECRET_KEY
-
-
-def register_user(client, username: str, email: str, password: str):
-    return client.post(
-        "/auth/register",
-        json={"username": username, "email": email, "password": password},
-    )
+from tests.conftest import bearer_headers, login_user, register_user
 
 
 def test_register_validation_error_does_not_echo_password(client):
@@ -65,6 +59,37 @@ def test_login_returns_401_for_invalid_credentials(client):
 
     assert response.status_code == 401
     assert response.json()["detail"] == "Invalid credentials"
+
+
+def test_auth_me_returns_current_user(client):
+    register_user(client, "meuser", "me@example.com", "validpass1")
+    token = login_user(client, "meuser", "validpass1")
+
+    response = client.get("/auth/me", headers=bearer_headers(token))
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["username"] == "meuser"
+    assert body["email"] == "me@example.com"
+    assert body["role"] == "user"
+    assert "id" in body
+
+
+def test_auth_me_returns_401_without_token(client):
+    response = client.get("/auth/me")
+
+    assert response.status_code == 401
+    assert response.json()["detail"] == "Not authenticated"
+
+
+def test_auth_me_returns_401_with_invalid_token(client):
+    response = client.get(
+        "/auth/me",
+        headers=bearer_headers("not-a-valid-token"),
+    )
+
+    assert response.status_code == 401
+    assert response.json()["detail"] == "Invalid or expired token"
 
 
 def test_login_returns_401_for_unknown_user(client):

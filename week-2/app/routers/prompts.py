@@ -3,6 +3,7 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.database import get_db
+from app.dependencies import get_current_user, require_prompt_owner_or_admin
 from app.models.prompt import Prompt
 from app.models.user import User
 from app.schemas.prompt import PromptCreate, PromptResponse, PromptUpdate
@@ -34,15 +35,13 @@ def get_prompt_or_404(db: Session, prompt_id: int) -> Prompt:
 @router.post("", status_code=status.HTTP_201_CREATED, response_model=PromptResponse)
 def create_prompt(
     data: PromptCreate,
-    user_id: int = Query(..., description="Owner user id (temporary until auth)"),
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    get_user_or_404(db, user_id)
-
     payload = data.model_dump()
     tags = payload.pop("tags")
 
-    prompt = Prompt(**payload, user_id=user_id)
+    prompt = Prompt(**payload, user_id=current_user.id)
     prompt.set_tags_list(tags)
 
     db.add(prompt)
@@ -83,9 +82,11 @@ def get_prompt(prompt_id: int, db: Session = Depends(get_db)):
 def update_prompt(
     prompt_id: int,
     data: PromptUpdate,
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
     prompt = get_prompt_or_404(db, prompt_id)
+    require_prompt_owner_or_admin(current_user, prompt)
     updates = data.model_dump(exclude_unset=True)
     tags = updates.pop("tags", None)
 
@@ -100,8 +101,13 @@ def update_prompt(
 
 
 @router.delete("/{prompt_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_prompt(prompt_id: int, db: Session = Depends(get_db)):
+def delete_prompt(
+    prompt_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
     prompt = get_prompt_or_404(db, prompt_id)
+    require_prompt_owner_or_admin(current_user, prompt)
     db.delete(prompt)
     db.commit()
 

@@ -21,6 +21,26 @@ test_engine = create_engine(
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=test_engine)
 
 
+def register_user(client: TestClient, username: str, email: str, password: str):
+    return client.post(
+        "/auth/register",
+        json={"username": username, "email": email, "password": password},
+    )
+
+
+def login_user(client: TestClient, username: str, password: str) -> str:
+    response = client.post(
+        "/auth/login",
+        json={"username": username, "password": password},
+    )
+    assert response.status_code == 200
+    return response.json()["access_token"]
+
+
+def bearer_headers(token: str) -> dict[str, str]:
+    return {"Authorization": f"Bearer {token}"}
+
+
 @pytest.fixture()
 def db() -> Generator[Session, None, None]:
     Base.metadata.create_all(bind=test_engine)
@@ -54,3 +74,9 @@ def test_user(db: Session) -> User:
     db.commit()
     db.refresh(user)
     return user
+
+
+@pytest.fixture()
+def auth_headers(client: TestClient, test_user: User) -> dict[str, str]:
+    token = login_user(client, test_user.username, "testpassword")
+    return bearer_headers(token)

@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.config import JWT_ALGORITHM, SECRET_KEY
 from app.database import get_db
+from app.models.prompt import Prompt
 from app.models.user import User
 
 bearer_scheme = HTTPBearer(auto_error=False)
@@ -51,3 +52,15 @@ def get_current_user(
         )
 
     return user
+
+
+def can_modify_prompt(user: User, prompt: Prompt) -> bool:
+    return user.role == "admin" or prompt.user_id == user.id
+
+
+def require_prompt_owner_or_admin(user: User, prompt: Prompt) -> None:
+    if not can_modify_prompt(user, prompt):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not allowed to modify this prompt",
+        )

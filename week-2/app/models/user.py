@@ -16,5 +16,6 @@ class User(Base):
     username: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
     email: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
     hashed_password: Mapped[str] = mapped_column(String(255), nullable=False)
+    role: Mapped[str] = mapped_column(String(20), nullable=False, default="user")
 
     prompts: Mapped[list["Prompt"]] = relationship("Prompt", back_populates="owner")

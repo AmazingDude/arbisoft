@@ -4,11 +4,17 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.database import get_db
+from app.dependencies import get_current_user
 from app.models.user import User
 from app.schemas.user import Token, UserCreate, UserLogin, UserResponse
 from app.security import create_access_token, hash_password, verify_password
 
 router = APIRouter(prefix="/auth", tags=["auth"])
+
+
+@router.get("/me", response_model=UserResponse)
+def read_current_user(current_user: User = Depends(get_current_user)):
+    return current_user
 
 
 @router.post(
