@@ -12,6 +12,18 @@ class UserCreate(UserBase):
     model_config = ConfigDict(hide_input_in_errors=True)
 
 
+class UserLogin(BaseModel):
+    username: str
+    password: SecretStr
+
+    model_config = ConfigDict(hide_input_in_errors=True)
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+
+
 class UserResponse(UserBase):
     id: int
 
