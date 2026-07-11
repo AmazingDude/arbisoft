@@ -1,11 +1,8 @@
-"""Create all database tables. Run from the week-2 root:
+"""Apply database migrations. Run from the week-2 root:
 
-    python -m scripts.init_db
+    py -m alembic upgrade head
 """
 
-from app.database import Base, engine
-from app.models import Prompt, User  # noqa: F401
-
 if __name__ == "__main__":
-    Base.metadata.create_all(bind=engine)
-    print("Database tables created.")
+    print("Use Alembic to manage the database schema:")
+    print("  py -m alembic upgrade head")

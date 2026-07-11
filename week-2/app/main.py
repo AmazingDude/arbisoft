@@ -6,14 +6,12 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from app.database import Base, engine
 from app.models import Prompt, User  # noqa: F401
 from app.routers import auth, health, prompts
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    Base.metadata.create_all(bind=engine)
     yield
 
 
