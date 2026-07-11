@@ -1,6 +1,8 @@
-import { Link, NavLink, Outlet } from "react-router-dom";
+import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { BookOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "../hooks/useAuth.js";
 
 const navLinkClass = ({ isActive }) =>
   cn(
@@ -11,11 +13,18 @@ const navLinkClass = ({ isActive }) =>
   );
 
 /**
- * Shared shell for every route: header/nav on top, the active route renders
- * into <Outlet />. Using a layout route keeps the navbar mounted across
- * navigations instead of re-rendering it per page.
+ * Shared shell for authenticated routes: header/nav on top, the active route
+ * renders into <Outlet />.
  */
 export default function Layout() {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login", { replace: true });
+  };
+
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <header className="sticky top-0 z-10 border-b border-border bg-background">
@@ -30,14 +39,31 @@ export default function Layout() {
             </span>
           </Link>
 
-          <nav className="flex items-center gap-1">
-            <NavLink to="/" end className={navLinkClass}>
-              Dashboard
-            </NavLink>
-            <NavLink to="/prompts/new" className={navLinkClass}>
-              New Prompt
-            </NavLink>
-          </nav>
+          <div className="flex items-center gap-2 sm:gap-3">
+            <nav className="flex items-center gap-1">
+              <NavLink to="/" end className={navLinkClass}>
+                Dashboard
+              </NavLink>
+              <NavLink to="/prompts/new" className={navLinkClass}>
+                New Prompt
+              </NavLink>
+            </nav>
+
+            <div className="hidden h-5 w-px bg-border sm:block" aria-hidden="true" />
+
+            <span className="hidden text-sm text-text-secondary sm:inline">
+              {user?.username}
+            </span>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={handleLogout}
+              className="text-text-secondary"
+            >
+              Log out
+            </Button>
+          </div>
         </div>
       </header>
 
