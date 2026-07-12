@@ -28,7 +28,7 @@ export default function NewPromptPage() {
           Capture a prompt, tool, and rating for your journal.
         </p>
       </div>
-      <PromptForm onSubmit={handleSubmit} submitLabel="Create prompt" />
+      <PromptForm onSubmit={handleSubmit} />
     </section>
   );
 }

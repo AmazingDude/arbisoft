@@ -57,9 +57,8 @@ export default function Layout() {
             <Button
               type="button"
               variant="ghost"
-              size="sm"
               onClick={handleLogout}
-              className="text-text-secondary"
+              className="h-8 px-3 text-sm font-medium text-destructive hover:bg-destructive/10 hover:text-destructive"
             >
               Log out
             </Button>

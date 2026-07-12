@@ -3,6 +3,7 @@ import Layout from "./components/Layout.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import DashboardPage from "./pages/DashboardPage.jsx";
 import NewPromptPage from "./pages/NewPromptPage.jsx";
+import EditPromptPage from "./pages/EditPromptPage.jsx";
 import PromptDetailPage from "./pages/PromptDetailPage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import RegisterPage from "./pages/RegisterPage.jsx";
@@ -21,6 +22,7 @@ export default function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<DashboardPage />} />
           <Route path="prompts/new" element={<NewPromptPage />} />
+          <Route path="prompts/:id/edit" element={<EditPromptPage />} />
           <Route path="prompts/:id" element={<PromptDetailPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>

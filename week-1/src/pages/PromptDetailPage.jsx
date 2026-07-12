@@ -1,5 +1,5 @@
 import { Link, useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Trash2 } from "lucide-react";
+import { ArrowLeft, Pencil, Trash2 } from "lucide-react";
 import { usePrompts } from "../hooks/usePrompts.js";
 import { Button } from "@/components/ui/button";
 import { buttonVariants } from "@/components/ui/button-variants";
@@ -110,7 +110,16 @@ export default function PromptDetailPage() {
         </section>
       )}
 
-      <div className="border-t border-border pt-6">
+      <div className="flex flex-wrap gap-3 border-t border-border pt-6">
+        <Button
+          type="button"
+          variant="secondary"
+          onClick={() => navigate(`/prompts/${prompt.id}/edit`)}
+          className="gap-2"
+        >
+          <Pencil className="h-4 w-4" aria-hidden="true" />
+          Edit
+        </Button>
         <Button
           type="button"
           variant="destructive"

@@ -23,22 +23,24 @@ const fieldClass = "space-y-2";
  * Validation rule (Week 1 scope): title + content are required.
  *
  * @param {{
- *   initialValues?: Partial<import("../types.js").Prompt>,
- *   onSubmit: (data: Omit<import("../types.js").Prompt, "id" | "createdAt">) => (void | Promise<unknown>),
+ *   initialData?: Partial<import("../types.js").Prompt>,
+ *   onSubmit: (data: Omit<import("../types.js").Prompt, "id" | "createdAt" | "userId">) => (void | Promise<unknown>),
  *   submitLabel?: string,
  * }} props
  */
 export default function PromptForm({
-  initialValues,
+  initialData,
   onSubmit,
-  submitLabel = "Save prompt",
+  submitLabel = initialData ? "Save changes" : "Create prompt",
 }) {
   const [values, setValues] = useState(() => ({
     ...EMPTY,
-    ...initialValues,
-    tags: Array.isArray(initialValues?.tags)
-      ? initialValues.tags.join(", ")
-      : EMPTY.tags,
+    ...initialData,
+    tags: Array.isArray(initialData?.tags)
+      ? initialData.tags.join(", ")
+      : typeof initialData?.tags === "string"
+        ? initialData.tags
+        : EMPTY.tags,
   }));
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
