@@ -4,6 +4,7 @@ import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import StarRating from "./StarRating.jsx";
 import ToolDot from "./ToolDot.jsx";
+import { formatRelativeTime } from "@/lib/formatDate.js";
 import { cn } from "@/lib/utils";
 
 /**
@@ -26,6 +27,8 @@ function getContentPreview(content) {
 }
 
 function PromptCard({ prompt, onDelete }) {
+  const relativeCreatedAt = formatRelativeTime(prompt.createdAt);
+
   return (
     <article
       className={cn(
@@ -38,9 +41,19 @@ function PromptCard({ prompt, onDelete }) {
         aria-label={prompt.title}
         className="min-w-0 flex-1 cursor-pointer px-4 py-3 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-terracotta"
       >
-        <h3 className="truncate text-sm font-medium text-text-primary transition-ui group-hover:text-terracotta">
-          {prompt.title}
-        </h3>
+        <div className="flex items-baseline justify-between gap-3">
+          <h3 className="min-w-0 truncate text-sm font-medium text-text-primary transition-ui group-hover:text-terracotta">
+            {prompt.title}
+          </h3>
+          {relativeCreatedAt ? (
+            <time
+              dateTime={prompt.createdAt}
+              className="shrink-0 text-xs text-text-secondary"
+            >
+              {relativeCreatedAt}
+            </time>
+          ) : null}
+        </div>
 
         <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-text-secondary">
           <span className="inline-flex items-center gap-1.5">

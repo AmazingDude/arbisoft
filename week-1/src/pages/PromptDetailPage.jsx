@@ -6,6 +6,7 @@ import { buttonVariants } from "@/components/ui/button-variants";
 import PromptCodeBlock from "@/components/PromptCodeBlock.jsx";
 import StarRating from "@/components/StarRating.jsx";
 import ToolDot from "@/components/ToolDot.jsx";
+import { formatFullDate } from "@/lib/formatDate.js";
 
 /**
  * "/prompts/:id" — Notion-style reading view for a single prompt.
@@ -49,11 +50,7 @@ export default function PromptDetailPage() {
     }
   };
 
-  const formattedDate = new Date(prompt.createdAt).toLocaleDateString(undefined, {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  const formattedDate = formatFullDate(prompt.createdAt);
 
   return (
     <article className="mx-auto max-w-2xl space-y-8">
