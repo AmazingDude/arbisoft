@@ -10,8 +10,12 @@ export default function NewPromptPage() {
   const navigate = useNavigate();
 
   const handleSubmit = async (data) => {
-    const created = await addPrompt(data);
-    navigate(`/prompts/${created.id}`);
+    try {
+      const created = await addPrompt(data);
+      navigate(`/prompts/${created.id}`);
+    } catch (err) {
+      window.alert(err.message || "Could not create prompt");
+    }
   };
 
   return (

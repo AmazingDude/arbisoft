@@ -29,6 +29,7 @@ export const PROMPT_TOOLS = [
  * @property {string[]} tags
  * @property {string} notes
  * @property {string} createdAt      // ISO string
+ * @property {number} [userId]       // owner id from the API (optional in UI)
  */
 
 export {};

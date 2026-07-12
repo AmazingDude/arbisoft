@@ -13,10 +13,18 @@ import ToolDot from "@/components/ToolDot.jsx";
 export default function PromptDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { prompts, isLoading, removePrompt } = usePrompts();
+  const { prompts, isLoading, error, removePrompt } = usePrompts();
 
   if (isLoading) {
     return <p className="text-sm text-text-secondary">Loading…</p>;
+  }
+
+  if (error) {
+    return (
+      <p role="alert" className="text-sm text-destructive">
+        Failed to load prompts: {error}
+      </p>
+    );
   }
 
   const prompt = prompts.find((p) => p.id === id);
@@ -33,8 +41,12 @@ export default function PromptDetailPage() {
   }
 
   const handleDelete = async () => {
-    await removePrompt(prompt.id);
-    navigate("/");
+    try {
+      await removePrompt(prompt.id);
+      navigate("/");
+    } catch (err) {
+      window.alert(err.message || "Could not delete prompt");
+    }
   };
 
   const formattedDate = new Date(prompt.createdAt).toLocaleDateString(undefined, {

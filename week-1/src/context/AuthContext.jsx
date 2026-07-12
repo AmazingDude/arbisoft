@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { authApi } from "../api/authApi.js";
+import { TOKEN_KEY } from "../api/client.js";
 import { AuthContext } from "./auth-context.js";
-
-const TOKEN_KEY = "auth_token";
 
 /**
  * Auth state lives here (mirrors PromptProvider): one place for token + user,
