@@ -18,6 +18,13 @@ export default function DashboardPage() {
     return [...set].sort();
   }, [prompts]);
 
+  // Ignore selections for tags that no longer exist (e.g. last prompt with
+  // that tag was deleted) so filters can't get stuck with no chip to clear.
+  const activeSelectedTags = useMemo(
+    () => selectedTags.filter((tag) => allTags.includes(tag)),
+    [selectedTags, allTags]
+  );
+
   const visiblePrompts = useMemo(() => {
     const q = query.trim().toLowerCase();
     return prompts.filter((p) => {
@@ -25,15 +32,15 @@ export default function DashboardPage() {
         q === "" ||
         p.title.toLowerCase().includes(q) ||
         p.content.toLowerCase().includes(q) ||
-        p.notes.toLowerCase().includes(q);
+        (p.notes ?? "").toLowerCase().includes(q);
 
       const matchesTags =
-        selectedTags.length === 0 ||
-        selectedTags.every((tag) => p.tags.includes(tag));
+        activeSelectedTags.length === 0 ||
+        activeSelectedTags.every((tag) => p.tags.includes(tag));
 
       return matchesQuery && matchesTags;
     });
-  }, [prompts, query, selectedTags]);
+  }, [prompts, query, activeSelectedTags]);
 
   const handleToggleTag = useCallback((tag) => {
     setSelectedTags((prev) =>
@@ -44,8 +51,12 @@ export default function DashboardPage() {
   const handleClearTags = useCallback(() => setSelectedTags([]), []);
 
   const handleDelete = useCallback(
-    (id) => {
-      removePrompt(id);
+    async (id) => {
+      try {
+        await removePrompt(id);
+      } catch (err) {
+        window.alert(err.message || "Could not delete prompt");
+      }
     },
     [removePrompt]
   );
@@ -80,7 +91,7 @@ export default function DashboardPage() {
 
       <TagFilter
         tags={allTags}
-        selectedTags={selectedTags}
+        selectedTags={activeSelectedTags}
         onToggle={handleToggleTag}
         onClear={handleClearTags}
       />
