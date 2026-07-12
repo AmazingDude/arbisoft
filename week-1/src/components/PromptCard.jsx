@@ -9,10 +9,10 @@ import { cn } from "@/lib/utils";
 /**
  * Single prompt summary in the list.
  *
+ * The main row body is a <Link> (full-row click). Delete sits outside that
+ * link so a delete click never navigates to the detail page.
+ *
  * Wrapped in React.memo so it only re-renders when its own props change.
- * That pairs with the useCallback'd onDelete handler from the parent: a stable
- * function identity lets memo actually skip re-renders when the list re-renders
- * for unrelated reasons (e.g. typing in the search box).
  *
  * @param {{ prompt: import("../types.js").Prompt, onDelete: (id: string) => void }} props
  */
@@ -29,18 +29,17 @@ function PromptCard({ prompt, onDelete }) {
   return (
     <article
       className={cn(
-        "group flex items-center gap-3 border-b border-border bg-surface px-4 py-3 transition-ui",
+        "group flex items-stretch border-b border-border bg-surface transition-ui",
         "motion-safe:hover:-translate-y-px hover:bg-surface-hover"
       )}
     >
-      <div className="min-w-0 flex-1">
-        <h3 className="truncate text-sm font-medium">
-          <Link
-            to={`/prompts/${prompt.id}`}
-            className="text-text-primary transition-ui hover:text-terracotta"
-          >
-            {prompt.title}
-          </Link>
+      <Link
+        to={`/prompts/${prompt.id}`}
+        aria-label={prompt.title}
+        className="min-w-0 flex-1 cursor-pointer px-4 py-3 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-terracotta"
+      >
+        <h3 className="truncate text-sm font-medium text-text-primary transition-ui group-hover:text-terracotta">
+          {prompt.title}
         </h3>
 
         <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-text-secondary">
@@ -63,19 +62,25 @@ function PromptCard({ prompt, onDelete }) {
             {prompt.tags.map((tag) => `#${tag}`).join(" ")}
           </p>
         )}
-      </div>
+      </Link>
 
-      <Button
-        type="button"
-        variant="ghost"
-        size="icon"
-        onClick={() => onDelete(prompt.id)}
-        className="shrink-0 text-text-secondary opacity-0 transition-ui group-hover:opacity-100 focus-visible:opacity-100 hover:text-destructive"
-        aria-label="Delete prompt"
-      >
-        <Trash2 className="h-4 w-4" aria-hidden="true" />
-        <span className="sr-only">Delete</span>
-      </Button>
+      <div className="flex shrink-0 items-center pr-3">
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            onDelete(prompt.id);
+          }}
+          className="text-text-secondary opacity-0 transition-ui group-hover:opacity-100 focus-visible:opacity-100 hover:text-destructive"
+          aria-label="Delete prompt"
+        >
+          <Trash2 className="h-4 w-4" aria-hidden="true" />
+          <span className="sr-only">Delete</span>
+        </Button>
+      </div>
     </article>
   );
 }
